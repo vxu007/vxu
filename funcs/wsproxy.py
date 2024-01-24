@@ -4,7 +4,6 @@
 from __future__ import print_function
 import socket
 import threading
-import _thread
 import select
 import signal
 import sys
@@ -53,7 +52,7 @@ class Server(threading.Thread):
 
                 conn = ConnectionHandler(c, self, addr)
                 conn.start()
-                self.addConn(conn)
+                self.add_conn(conn)
         finally:
             self.running = False
             self.soc.close()
@@ -93,7 +92,7 @@ class ConnectionHandler(threading.Thread):
                 self.client.shutdown(socket.SHUT_RDWR)
                 self.client.close()
         except Exception as e:
-            print(f"Error closing client socket: {e}")
+            print("Error closing client socket: {}".format(e))
         finally:
             self.client_closed = True
 
@@ -102,7 +101,7 @@ class ConnectionHandler(threading.Thread):
                 self.target.shutdown(socket.SHUT_RDWR)
                 self.target.close()
         except Exception as e:
-            print(f"Error closing target socket: {e}")
+            print("Error closing target socket: {}".format(e))
         finally:
             self.target_closed = True
 
@@ -210,7 +209,7 @@ class ConnectionHandler(threading.Thread):
                             break
                     except Exception as e:
                         error = True
-                        print(f"Error during data transfer: {e}")
+                        print("Error during data transfer: {}".format(e))
                         break
             if count == TIMEOUT:
                 error = True
