@@ -1,3 +1,8 @@
+print("\033[1;31m⚙︎ Voltssh-X} 'ULTIMATE' by @voltsshx ⚙︎")
+print("\033[1;33m  ⌯ Hysteria Config Updater\033[1;33m")
+print("    ------++------++------++------")
+print(" ")
+
 import json
 
 config_file = "/etc/hysteria/config.json"
@@ -44,7 +49,6 @@ updated_config = (
     down_mbps=config["down_mbps"],
     disable_udp=config["disable_udp"],
     obfs=config["obfs"],
-    auth_mode=config["auth"]["mode"],
     config_list='", "'.join(config["auth"]["config"])
 )
 
@@ -53,7 +57,5 @@ with open(config_file, "w") as f:
     f.write(updated_config)
 
 print("  * * * * * * *")
-print("  ")
-print("  * Client Authentication(Auth) Password Added!.")
-print("  ")
-print("  * * * * * * *")
+print("\033[32m  * Client Authentication(Auth) Password Added!.")
+print("\033[0m")
