@@ -254,10 +254,10 @@ def parse_args(argv):
 
 
 def main(host=LISTENING_ADDR, port=LISTENING_PORT):
-    print("\033[0;34m━" * 8, "\033[1;32m WebSocket", "\033[0;34m━" * 8, "\n")
-    print("\033[1;33mHost/IP:\033[1;32m " + LISTENING_ADDR)
-    print("\033[1;33mPort:\033[1;32m " + str(LISTENING_PORT) + "\n")
-    print("\033[0;34m⚙︎" * 10, "\033[1;32m  Voltssh-X 'ULTIMATE' by @voltsshx", "\033[0;34m⚙︎\033[1;37m" * 11, "\n")
+    print("WebSocket\n")
+    print("Host/IP: " + LISTENING_ADDR)
+    print("Port: " + str(LISTENING_PORT) + "\n")
+    print("Voltssh-X 'ULTIMATE' by @voltsshx\n")
     server = Server(LISTENING_ADDR, LISTENING_PORT)
     server.start()
     while True:
