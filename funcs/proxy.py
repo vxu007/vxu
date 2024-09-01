@@ -16,7 +16,7 @@ MSG = ''
 COR = '<font color="null">'
 FTAG = '</font>'
 DEFAULT_HOST = '0.0.0.0:22'
-RESPONSE = 'HTTP/1.1 101 Protocols Switched <strong> ⚙︎ Voltssh-X ULTIMATE by @voltsshx ⚙︎</strong>\r\n\r\n'
+RESPONSE = 'HTTP/1.1 101 Protocols Switched <strong> Voltssh-X ULTIMATE by @lstunnels </strong>\r\n\r\n'
  
 class Server(threading.Thread):
     def __init__(self, host, port):
@@ -218,7 +218,7 @@ def main(host=IP, port=PORT):
     print "\033[0;34m━"*8,"\033[1;32m WebSocket","\033[0;34m━"*8,"\n"
     print "\033[1;33mHost/IP:\033[1;32m " + IP
     print "\033[1;33mPort:\033[1;32m " + str(PORT) + "\n"
-    print "\033[0;34m⚙︎"*10,"\033[1;32m  Voltssh-X 'ULTIMATE' by @voltsshx","\033[0;34m⚙︎\033[1;37m"*11,"\n"
+    print "\033[0;34m⚙︎"*10,"\033[1;32m  Voltssh-X 'ULTIMATE' by @lstunnels","\033[0;34m⚙︎\033[1;37m"*11,"\n"
     server = Server(IP, PORT)
     server.start()
     while True:
