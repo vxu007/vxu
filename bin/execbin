@@ -235,6 +235,12 @@ back() {
   msg -bar0
 }
 
+exit-kill() {
+  msg -bar
+  echo -ne "$(msg -verd " ⌈0⌋")$(msg -verm2 "⇢")" && msg -bra "\033[1;41m${a_back:-Exit}"
+  msg -bar0
+}
+
 exit2() {
   msg -bar
   echo -ne "$(msg -verd " ⌈0⌋")$(msg -verm2 "⇢")" && msg -bra "\033[1;41m${a_back:-Exit}"
@@ -347,6 +353,7 @@ export -f in_option
 export -f in_option_down
 export -f del
 export -f exit2
+export -f exit-kill
 export -f Return2Menu
 # export -f Return
 export -f ReturnBack
