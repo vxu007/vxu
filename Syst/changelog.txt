@@ -1,0 +1,32 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        Voltssh-X ULTIMATE Changelog
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Version 3.2.1 - 2025-08-04
+──────────────────────────
+• Improved support for Debian 12
+• Fixed SSL tunnel port change issue on Debian 12
+• Improved update script with version checking
+• Added changelog display during updates
+• Optimized menu loading speed
+• Fixed user account expiration calculation
+
+Version 3.2.0 - 2025-07-10
+──────────────────────────
+• Added Docker container support
+• New TCP BBR v3 implementation
+• Improved VPN connection stability
+• Updated all security patches
+• Added automatic backup system
+
+Version 3.1.8 - 2024-12-23
+──────────────────────────
+• Fixed SSH port forwarding bug
+• Improved websocket proxy performance
+• Added new server locations
+• Optimized resource usage
+• Updated documentation
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    End of Changelog - @deviyke/@lstunnels
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
