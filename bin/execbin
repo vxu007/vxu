@@ -131,6 +131,27 @@ print_title() {
   done <<<$(echo -e "$text")
 }
 
+print_left() {
+  if [[ -z $2 ]]; then
+    text="$1"
+  else
+    col="$1"
+    text="$2"
+  fi
+
+  left_pad="   "  # <-- Left margin (3 spaces, adjust as needed)
+
+  while read -r line; do
+    padded_line="${left_pad}${line}"
+    if [[ -z $2 ]]; then
+      msg -azu "$padded_line"
+    else
+      msg "$col" "$padded_line"
+    fi
+  done <<<"$(echo -e "$text")"
+}
+
+
 sub_title() {
   if [[ -z $2 ]]; then
     text="$1"
@@ -345,6 +366,11 @@ export -f selection_fun
 export -f menu_func
 export -f print_center
 export -f title
+export -f main_title
+export -f title_sub
+export -f sub_title
+export -f print_title
+export -f print_left
 export -f back
 export -f inst
 export -f enter
@@ -355,7 +381,6 @@ export -f del
 export -f exit2
 export -f exit-kill
 export -f Return2Menu
-# export -f Return
 export -f ReturnBack
 export -f ReturnBack2
 export -f ReturnBack3
