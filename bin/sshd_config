@@ -1,6 +1,6 @@
 # Minimal SSH server configuration
 
-Port 2222
+Port 22
 ListenAddress 0.0.0.0
 
 PermitRootLogin yes
