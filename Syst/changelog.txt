@@ -2,6 +2,12 @@
         Voltssh-X ULTIMATE Changelog
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+Version 3.2.5 - 2025-08-29
+──────────────────────────
+• Improved WS-ePro Port Changer
+• Improved Uninstaller
+• Improved Webmin Guide
+
 Version 3.2.1 - 2025-08-04
 ──────────────────────────
 • Improved support for Debian 12
@@ -28,5 +34,5 @@ Version 3.1.8 - 2024-12-23
 • Updated documentation
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    End of Changelog - @deviyke/@lstunnels
+    End of Changelog - @deviyke / @lstunnels
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
