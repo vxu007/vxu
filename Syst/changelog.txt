@@ -2,6 +2,13 @@
         Voltssh-X ULTIMATE Changelog
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+Version 3.2.6 - 2025-08-31
+──────────────────────────
+• Added/Improved Support for Ubuntu 22.04.5 LTS (Jammy Jellyfish)
+• Fix Broken Protocols
+• [UDP Request] may not work on some systems]
+• Add File Browser
+
 Version 3.2.5 - 2025-08-29
 ──────────────────────────
 • Improved WS-ePro Port Changer
