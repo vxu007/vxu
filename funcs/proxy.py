@@ -1,31 +1,40 @@
 #!/usr/bin/env python3
 # encoding: utf-8
-import socket, threading, thread, select, signal, sys, time
+
+import socket
+import threading
+import select
+import signal
+import sys
+import time
 from os import system
+
 system("clear")
-#conexao
+
+# Configuration
 IP = '0.0.0.0'
 try:
-   PORT = int(sys.argv[1])
+    PORT = int(sys.argv[1])
 except:
-   PORT = 80
+    PORT = 80
+
 PASS = ''
 BUFLEN = 8196 * 8
 TIMEOUT = 60
-MSG = ''
-COR = '<font color="null">'
-FTAG = '</font>'
 DEFAULT_HOST = '0.0.0.0:22'
-RESPONSE = 'HTTP/1.1 101 Protocols Switched <strong> Voltssh-X ULTIMATE by @lstunnels </strong>\r\n\r\n'
- 
+RESPONSE = 'HTTP/1.1 101 Protocols Switched <strong> ⚙︎ Voltssh-X ULTIMATE by @deviyke ⚙︎</strong>\r\n\r\n'
+
 class Server(threading.Thread):
     def __init__(self, host, port):
-        threading.Thread.__init__(self)
+        if sys.version_info[0] == 2:
+            threading.Thread.__init__(self)
+        else:
+            super().__init__()
         self.running = False
         self.host = host
         self.port = port
         self.threads = []
-	self.threadsLock = threading.Lock()
+        self.threadsLock = threading.Lock()
 
     def run(self):
         self.soc = socket.socket(socket.AF_INET)
@@ -35,198 +44,158 @@ class Server(threading.Thread):
         self.soc.listen(0)
         self.running = True
 
-        try:                    
+        try:
             while self.running:
                 try:
                     c, addr = self.soc.accept()
-                    c.setblocking(1)
+                    c.setblocking(True)
+                    conn = ConnectionHandler(c, self, addr)
+                    conn.start()
+                    self.addConn(conn)
                 except socket.timeout:
                     continue
-                
-                conn = ConnectionHandler(c, self, addr)
-                conn.start();
-                self.addConn(conn)
         finally:
             self.running = False
             self.soc.close()
-            
-	
+
     def addConn(self, conn):
-        try:
-            self.threadsLock.acquire()
+        with self.threadsLock:
             if self.running:
                 self.threads.append(conn)
-        finally:
-            self.threadsLock.release()
-                    
+
     def removeConn(self, conn):
-        try:
-            self.threadsLock.acquire()
-            self.threads.remove(conn)
-        finally:
-            self.threadsLock.release()
-                
+        with self.threadsLock:
+            if conn in self.threads:
+                self.threads.remove(conn)
+
     def close(self):
-        try:
+        with self.threadsLock:
             self.running = False
-            self.threadsLock.acquire()
-            
-            threads = list(self.threads)
-            for c in threads:
+            for c in list(self.threads):
                 c.close()
-        finally:
-            self.threadsLock.release()
-			
+
 
 class ConnectionHandler(threading.Thread):
     def __init__(self, socClient, server, addr):
-        threading.Thread.__init__(self)
+        if sys.version_info[0] == 2:
+            threading.Thread.__init__(self)
+        else:
+            super().__init__()
         self.clientClosed = False
         self.targetClosed = True
         self.client = socClient
-        self.client_buffer = ''
+        self.client_buffer = b''
         self.server = server
 
     def close(self):
-        try:
-            if not self.clientClosed:
+        if not self.clientClosed:
+            try:
                 self.client.shutdown(socket.SHUT_RDWR)
                 self.client.close()
-        except:
-            pass
-        finally:
+            except:
+                pass
             self.clientClosed = True
-            
-        try:
-            if not self.targetClosed:
+
+        if not self.targetClosed:
+            try:
                 self.target.shutdown(socket.SHUT_RDWR)
                 self.target.close()
-        except:
-            pass
-        finally:
+            except:
+                pass
             self.targetClosed = True
 
     def run(self):
         try:
             self.client_buffer = self.client.recv(BUFLEN)
-        
-            hostPort = self.findHeader(self.client_buffer, 'X-Real-Host')
-            
-            if hostPort == '':
-                hostPort = DEFAULT_HOST
-
-            split = self.findHeader(self.client_buffer, 'X-Split')
-
-            if split != '':
+            hostPort = self.findHeader(self.client_buffer, b'X-Real-Host') or DEFAULT_HOST
+            split = self.findHeader(self.client_buffer, b'X-Split')
+            if split:
                 self.client.recv(BUFLEN)
-            
-            if hostPort != '':
-                passwd = self.findHeader(self.client_buffer, 'X-Pass')
-				
-                if len(PASS) != 0 and passwd == PASS:
-                    self.method_CONNECT(hostPort)
-                elif len(PASS) != 0 and passwd != PASS:
-                    self.client.send('HTTP/1.1 400 WrongPass!\r\n\r\n')
-                if hostPort.startswith(IP):
-                    self.method_CONNECT(hostPort)
-                else:
-                   self.client.send('HTTP/1.1 403 Forbidden!\r\n\r\n')
-            else:
-                print '- No X-Real-Host!'
-                self.client.send('HTTP/1.1 400 NoXRealHost!\r\n\r\n')
 
+            passwd = self.findHeader(self.client_buffer, b'X-Pass')
+            if PASS and passwd == PASS:
+                self.method_CONNECT(hostPort)
+            elif PASS and passwd != PASS:
+                self.client.send(b'HTTP/1.1 400 WrongPass!\r\n\r\n')
+            elif hostPort.startswith(IP):
+                self.method_CONNECT(hostPort)
+            else:
+                self.client.send(b'HTTP/1.1 403 Forbidden!\r\n\r\n')
         except Exception as e:
-	    pass
+            print('[-] Error: %s' % e)
         finally:
             self.close()
             self.server.removeConn(self)
 
     def findHeader(self, head, header):
-        aux = head.find(header + ': ')
-    
-        if aux == -1:
+        try:
+            lines = head.split(b'\r\n')
+            for line in lines:
+                if line.lower().startswith(header.lower()):
+                    return line.split(b': ')[1].decode()
+        except:
             return ''
-
-        aux = head.find(':', aux)
-        head = head[aux+2:]
-        aux = head.find('\r\n')
-
-        if aux == -1:
-            return ''
-
-        return head[:aux];
+        return ''
 
     def connect_target(self, host):
-        i = host.find(':')
-        if i != -1:
-            port = int(host[i+1:])
-            host = host[:i]
+        if ':' in host:
+            hostname, port = host.split(':')
+            port = int(port)
         else:
-            if self.method=='CONNECT':
-                port = 443
-            else:
-                port = 22
+            hostname = host
+            port = 443 if self.method == 'CONNECT' else 22
 
-        (soc_family, soc_type, proto, _, address) = socket.getaddrinfo(host, port)[0]
-
-        self.target = socket.socket(soc_family, soc_type, proto)
+        addr_info = socket.getaddrinfo(hostname, port)[0]
+        self.target = socket.socket(addr_info[0], addr_info[1], addr_info[2])
         self.targetClosed = False
-        self.target.connect(address)
+        self.target.connect(addr_info[4])
 
     def method_CONNECT(self, path):
+        self.method = 'CONNECT'
         self.connect_target(path)
         self.client.sendall(RESPONSE)
-        self.client_buffer = ''
+        self.client_buffer = b''
         self.doCONNECT()
-                    
+
     def doCONNECT(self):
         socs = [self.client, self.target]
         count = 0
-        error = False
         while True:
             count += 1
-            (recv, _, err) = select.select(socs, [], socs, 3)
-            if err:
-                error = True
-            if recv:
-                for in_ in recv:
-		    try:
-                        data = in_.recv(BUFLEN)
-                        if data:
-			    if in_ is self.target:
-				self.client.send(data)
-                            else:
-                                while data:
-                                    byte = self.target.send(data)
-                                    data = data[byte:]
-
-                            count = 0
-			else:
-			    break
-		    except:
-                        error = True
-                        break
-            if count == TIMEOUT:
-                error = True
-
-            if error:
+            r, _, e = select.select(socs, [], socs, 3)
+            if e:
+                break
+            if r:
+                for sock in r:
+                    try:
+                        data = sock.recv(BUFLEN)
+                        if not data:
+                            return
+                        if sock is self.target:
+                            self.client.sendall(data)
+                        else:
+                            self.target.sendall(data)
+                        count = 0
+                    except:
+                        return
+            if count >= TIMEOUT:
                 break
 
 
-
 def main(host=IP, port=PORT):
-    print "\033[0;34m━"*8,"\033[1;32m WebSocket","\033[0;34m━"*8,"\n"
-    print "\033[1;33mHost/IP:\033[1;32m " + IP
-    print "\033[1;33mPort:\033[1;32m " + str(PORT) + "\n"
-    print "\033[0;34m⚙︎"*10,"\033[1;32m  Voltssh-X 'ULTIMATE' by @lstunnels","\033[0;34m⚙︎\033[1;37m"*11,"\n"
-    server = Server(IP, PORT)
+    print("\033[0;34m━"*8, "\033[1;32m Socket ", "\033[0;34m━"*8)
+    print("\033[1;33mHost/IP:\033[1;32m", IP)
+    print("\033[1;33mPort:\033[1;32m", port)
+    print("\033[0;34m⚙︎"*10, "\033[1;32mVoltssh-X 'ULTIMATE' *Focused* by @deviyke", "\033[0;34m⚙︎"*11)
+    server = Server(host, port)
     server.start()
-    while True:
-        try:
+    try:
+        while True:
             time.sleep(2)
-        except KeyboardInterrupt:
-            print '\nstopping...'
-            server.close()
-            break
+    except KeyboardInterrupt:
+        print('\n[+] Stopping server...')
+        server.close()
+
+
 if __name__ == '__main__':
     main()
